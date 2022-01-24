@@ -51,4 +51,18 @@ contract ElectionsContract {
         require(isCandidateRegistered[candidateId] == true, "Candidate is not registered");
         return candidateIdToVotes[candidateId];
     }
+
+    function getWinner() public view returns (string memory, uint){
+        string memory candidateMaxVotesName = "";
+        int candidateMaxVote = - 1;
+        for (uint i = 0; i < candidates.length; i++) {
+            uint candidateId = candidates[i].id;
+            uint votes = viewVotes(candidateId);
+            if (int(votes) > candidateMaxVote) {
+                candidateMaxVote = int(votes);
+                candidateMaxVotesName = candidates[i].name;
+            }
+        }
+        return (candidateMaxVotesName, uint(candidateMaxVote));
+    }
 }

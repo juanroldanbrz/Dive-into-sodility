@@ -55,6 +55,20 @@ contract("ElectionsContract", accounts => {
         const votes = await instance.viewVotes(candidateId, {from: accounts[5]})
         assert.equal(2, votes.toNumber());
     });
+    it("Can get the winner", async () => {
+        const instance = await ElectionsContract.deployed();
+        await instance.registerCandidate("Manolo", {from: accounts[0]});
+        await instance.registerCandidate("Pedro", {from: accounts[0]});
+        let event = await instance.getPastEvents('CandidateRegistered');
+        const candidateId = event[0].args[1].toNumber();
+        await instance.voteCandidate(candidateId, {from: accounts[6]});
+        await instance.voteCandidate(candidateId, {from: accounts[7]});
+        await instance.voteCandidate(candidateId, {from: accounts[8]});
+        await instance.voteCandidate(candidateId, {from: accounts[9]});
+        const winner = await instance.getWinner()
+        assert.equal("Pedro", winner[0]);
+        assert.equal(4, winner[1].toNumber());
+    });
 
 
 });
